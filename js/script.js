@@ -13,11 +13,7 @@ class User {
         return this.data;
     }
 }
-const name = document.getElementById('user_name');
-const city = document.getElementById('user_city');
-const email = document.getElementById('user_email');
-const phone = document.getElementById('user_phone');
-
+ 
 class Contacts {
     constructor() {
                 
@@ -26,24 +22,27 @@ class Contacts {
       }
 
     add(data) {
+       
         if (data.id == undefined) data.id = 0;
 
-        const user = new User(id, name.value, city.value, address.value, phone.value);
-
+        const user = new User(data);
         let maxId = 0;
-        this.data.forEach(note => {
-            if (note.data.id != undefined) {
-                if (maxId == undefined) maxId = +note.data.id;
-                else if (maxId < +note.data.id) maxId = +note.data.id;
+
+        this.data.forEach(user => {
+            if (user.data.id != undefined) {
+                if (maxId == undefined) maxId = +user.data.id;
+                else if (maxId < +user.data.id) maxId = +user.data.id;
             }
         });
 
         maxId++;
-
-        
       
         user.edit({id: maxId});
-        this.data.push(user);     
+        this.data.push(user);  
+        localStorage.setItem('user',JSON.stringify(this.data))   
+
+       // let localUser = localStorage.getItem('this.data')
+        //if (localUser.length == null) this.data=JSON.parse(localUser)
      
     }
 
@@ -56,185 +55,211 @@ class Contacts {
 
         user = user[0];
         user.edit(data);
+        localStorage.setItem('user',JSON.stringify(this.data)) 
+       
     }
 
     remove(id) {
         this.data = this.data.filter(user => {
             return +user.data.id != +id;
         });
+        localStorage.removeItem('user',JSON.stringify(this.data))    
     }
 
     get() {
         return this.data;
+        
+
     }
 }
-class ContactsApp extends Contacts {
+
+class ContactsApp extends Contacts { 
     constructor() {
         super();
        
 
         this.init();
+
     }
+    /* getData(){
+        ( async function () {
+                    
+         let getting = await fetch('https://jsonplaceholder.typicode.com/users', {
+             method: 'GET',
+             body: JSON.stringify(user)
+         });
+         if  (!getting.ok) return;
+        });
+        this.add(this.data)
+    }*/
+
+
 
     init() {
-  
+        const contactsApp= document.createElement('div');
+        contactsApp.classList.add('contacts');
+        document.body.appendChild(contactsApp);
 
-        let htmlContacts =   `
-                                <div class="contacts">
-                                <h1>Contacts Book</h1>
-                                <div class= "contacts_form">
+        const h3 = document.createElement('h3');
+        h3.innerHTML = 'Contacts Book';
+        contactsApp.appendChild(h3);
 
-                                <form>
-                                <div class="input">
-                                <label for="user">Имя</label>
-                                <input type="textarea" id= "user_name" placeholder="Alex" name="user"/>
-                                </div>
 
-                                <div class="input">
-                                <label for="city">Город проживания</label>
-                                <input type="textarea" id="user_city" placeholder = "Minsk" name="city"/>
-                                </div>
+        const contactsForm = document.createElement('div');
+        contactsForm.classList.add('contacts__form');
+        contactsApp.appendChild(contactsForm);
 
-                                <div class="input">
-                                <label for="email">E-mail</label>
-                                <input type="email" id= "user_email" placeholder="alex@gmail.com" name="email"/>
-                                </div>
+        this.contactsList = document.createElement('div');
+        this.contactsList.classList.add('contacts__list');
+        contactsApp.appendChild(this.contactsList);
 
-                                <div class="input">
-                                <label for="phone">Телефон</label>
-                                <input type="tel" id="user_phone" placeholder = "+37529 666-66-66" name="phone"/>
-                                </div>
-                                </form>
-                                <span class="message"> Message here</span>
-                                <button type= "submit" class = "btn_add">Add</button>
+        this.contactName = document.createElement('input');
+        this.contactName.setAttribute('type', 'textarea');
+        this.contactName.setAttribute('name', 'Имя');
+        this.contactName.setAttribute('placeholder', 'Alex');
+        contactsForm.appendChild(this.contactName);
 
-                                </div>        
-                            </div>
-                            <div class="contacts_list"></div>
-                           `
+        this.contactCity = document.createElement('input');
+        this.contactCity.setAttribute('type', 'textarea');
+        this.contactCity.setAttribute('name', 'Город проживания');
+        this.contactCity.setAttribute('placeholder', 'Minsk');
+        contactsForm.appendChild(this.contactCity);
 
-        let contactform = document.querySelector('.contacts')
-        contactform.innerHTML = htmlContacts
+        this.contactEmail = document.createElement('input');
+        this.contactEmail.setAttribute('type', 'email');
+        this.contactEmail.setAttribute('name', 'E-mail');
+        this.contactEmail.setAttribute('placeholder', 'alex@gmail.com');
+        contactsForm.appendChild(this.contactEmail);
 
-        function setMessage(status, message){
-            let messageBox = document.querySelector('.message');
-            if (status == "error"){
-                messageBox.innerHTML = `${message}`;
-                messageBox.classList.add('error');
-                removeMessage(status, messageBox);
-            }
-            if(status == "success"){
-                messageBox.innerHTML = `${message}`;
-                messageBox.classList.add('success');
-                removeMessage(status, messageBox);
+        this.contactPhone = document.createElement('input');
+        this.contactPhone.setAttribute('type', 'tel');
+        this.contactPhone.setAttribute('name', 'Телефон');
+        this.contactPhone.setAttribute('placeholder', '+37529 666-66-66');
+        contactsForm.appendChild(this.contactPhone);
 
-            }
-        }
-        function removeMessage(status, messageBox){
-            setTimeout(function(){
-                messageBox.classList.remove(`${status}`);
-            }, 2000);
-        }
 
-        let btnAdd = document.querySelector('.btn_add')
-        btnAdd.addEventListener('click', user => {
-            if (cheakInputFields(user)){
-                setMessage("success", "Added successfully!");
-                maxId++;
-          
-           
-                  this.onAdd(user);
-            }else{
-                setMessage("error", "Field is ampty!");
+        const contactsBtnAdd = document.createElement('button');
+        contactsBtnAdd.setAttribute('class', 'btn_add');
+        contactsBtnAdd.innerHTML = 'Add';
+        contactsForm.appendChild(contactsBtnAdd);
 
-            }      
-        
-        });
-        }
-        
+        contactsBtnAdd.addEventListener('click', event =>{
+            this.onAdd(event);
+        })
+    }
 
     updateList() {
-      
+        this.contactsList.innerHTML = '';
 
         this.data.forEach(user => {
-            const userItem = document.createElement('div');
-            userItem.classList.add('contacts__item');
-            userItem.dataset.id =user.data.id;
-           
-                  
+            const contact = document.createElement('div');
+            contact.classList.add('contact_item');
 
-            userItem.innerHTML = `                                                                   
-                                    <div class = "record-form">
-                                    <span id ="labeling"> Имя: </span>
-                                    <span id= "name_content"> ${user.data.name}</span>
-                                </div>  
-                                <div class = "record-form">
-                                    <span id ="labeling"> Город проживани: </span>
-                                    <span id= "name_content"> ${user.data.city}</span>
-                                </div>  
-                                <div class = "record-form">
-                                    <span id ="labeling"> E-mail: </span>
-                                    <span id= "name_content"> ${user.data.email}</span>
-                                </div>  
-                                <div class = "record-form">
-                                    <span id ="labeling"> Телефон: </span>
-                                    <span id= "name_content"> ${user.data.phone}</span>
-                                </div>  
-                                    <button type="button" id="btn_delete">
-                                    <span>
-                                    <i class= "fas fa-trash"> </i>
-                                    </span>Delete
-                                </button>`;
+            const contactH3 = document.createElement('h3')
+            contactH3.innerHTML = user.data.name || '';
 
+           const contactSpan = document.createElement('span');
+           contactSpan.innerHTML = user.data.city + '<br>' + user.data.email + '<br>' + user.data.phone +'<br>';
             
-        let contactList = document.querySelector('.contacts_list')  ;
-        this.userItem.appendChild(contactList);
-           
-        });
-        let btnDelete = document.querySelector('.btn_delete')
-        btnDelete.addEventListener('click', user => {
-           
-                  this.onDelete(user);
-        
-        });
+           contact.dataset.id = user.data.id;
 
+            const contactEdit = document.createElement('button');
+            contactEdit.innerHTML = 'Edit';
+            
+            const contactRemove = document.createElement('button');
+            contactRemove.innerHTML = 'Delete';
+
+
+            contact.appendChild(contactH3);
+            contact.appendChild(contactSpan);
+            contact.appendChild(contactEdit);
+            contact.appendChild(contactRemove);
+
+            this.contactsList.appendChild(contact);
+
+            contactRemove.addEventListener('click', event =>{
+                this.onRemove(event);
+                
+            });
+            contactEdit.addEventListener('click', event =>{
+                this.onEdit(event);
+            });
+
+        });
+    }
+
+    onAdd(event) {
+
+        if (event.type !='click') return;
+
+        if (this.contactName.value.length == 0 || 
+            this.contactCity.value.length == 0 ||
+            this.contactEmail.value.length == 0 ||
+            this.contactPhone.value.length == 0) return;
+
+            let phoneNo = /\+375\s?\(?[0-9]{2}\)?\s?-?\d{3}\s?-?\d{2}\s?-?\d{2}/,
+                emailNo = /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/;
+
+
+        const data ={
+            name: (this.contactName && this.contactName.value.length > 0) ? this.contactName.value : '',
+            city: (this.contactCity && this.contactCity.value.length > 0) ? this.contactCity.value : '',
+            email: (this.contactEmail.value.match(emailNo)) ? this.contactEmail.value : alert ('Введите верно электронную почту'),
+            phone: (this.contactPhone.value.match(phoneNo)) ? this.contactPhone.value : alert ('Введите верно телефон')
+                    
+          
+         };
+
+        if (!this.contactName.dataset.action || !this.contactName.dataset.id){
+        this.add(data)
+    } else {
+        this.edit(this.contactName.dataset.id, data);
+        this.contactName.dataset.action = '';
+        this.contactName.dataset.id = '';
+    }
+
+        this.updateList();
+        this.contactName.value = '';
+        this.contactCity.value = '';
+        this.contactEmail.value = '';
+        this.contactPhone.value = '';
 
       
     }
-
-    onAdd(user) {
-
-      function cheakInputFields(inputArr){
-           if (inputArr[0].value === "" || inputArr[1].value === "" || inputArr[2].value === ""  ){
-                    return false;
-                }
-
-            let phoneNo = /\+375\s?\(?[0-9]{2}\)?\s?-?\d{3}\s?-?\d{2}\s?-?\d{2}/;
-            if(!inputArr[3].match(phoneNo)){
-                    return false;
-            }else{
-                return true
-            }
-        }
-           
-        
-
     
-        this.add({
-            content: user.target.value
-        })
-       
 
-        this.updateList();
-        user.target.value = '';
+    onRemove(event){
+        const parent = event.target.closest('.contact_item');
+        const id = parent.dataset.id; //забираем индификатор через родителя
     
-    }
-    onDelete(user){
+        if (!id) return;
 
-        userItem = user.target.parentElement;
-        contactList.removeChild(userItem)
-    }
+    this.remove(id);
+    this.updateList();
+}
+    onEdit(event){
+        //взять заметки и отобразить их в тайтл и тексариа
+        const parent = event.target.closest('.contact_item');
+            const id = parent.dataset.id; 
+             
+            if (!id) return;
+    //файнд возвращает отдельный элемент, который мы нашли
+            const user = this.data.find(user =>{
+                return user.data.id == id;
+            });
+    //помещаем значение в поле инпута
+            this.contactName.value = user.data.name;
+            this.contactCity.value = user.data.city;
+            this.contactEmail.value = user.data.email;
+            this.contactPhone.value = user.data.phone;
+
+
+            this.contactName.dataset.action = 'edit';
+            this.contactName.dataset.id = id;
 
 }
 
+}
+
+  
 new ContactsApp();

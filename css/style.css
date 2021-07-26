@@ -9,49 +9,29 @@ body{
     background-repeat: no-repeat;
     background-size: cover;
 }
-.contacts h1{
-    margin: 30px 0 20px 80px;
+.contacts h3{
+    margin: 20px 0 20px 0;
+    font-size: 30px;
     color: rgb(133, 121, 153); 
+    text-align: center;
 }
 .contacts_form{
-    display: flex;
-    flex-direction: column;
+    width: 50%;
+    margin: 0 auto;
 
 }
-.input{
-    width: 20%;
-    font-family: Georgia, 'Times New Roman', Times, serif;
-    font-size: 18px;
-    background: rgb(231, 226, 240);
-    margin: 5px;
-    padding: 10px;
-    text-align: end;
-}
+
 input{
-    width: 200px;
-    height: 30px;
+    width: 300px;
+    height: 40px;
     padding-left: 5px;
-    margin-left: 10px;
+    margin-bottom: 15px;
+    margin:10px auto;
     border: none; 
     border-radius: 5px;
-}
-.message{
-    text-align: center;
-    display: block;
-    width: 50%;
-    margin: 10px auto;
-    font-size: 14px;
-    border-radius: 5px;
-    visibility: hidden;
-
-}
-.error{
-    background-color: red;
-    visibility: visible;
-}
-.success{
-    background-color: green;
-    visibility: visible!important;
+    display: flex;
+    flex-direction: column;
+    
 }
 
 .btn_add{
@@ -59,36 +39,56 @@ input{
     border-radius: 10px;
     border: none;
     outline: none;
-    width: 100px;
+    width: 200px;
     height: 40px;
     text-transform: uppercase;
-    font-size: 14px;
-    font-weight: 700;
-    text-align: center;
-    margin-left: 310px;
-    transition: all 0.5s ease;
+    font-size: 16px;
+    font-weight: 800;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    margin: 10px auto;
     cursor: pointer;
+    margin-bottom: 20px;
     
 }
 button:hover{
-    opacity: 1;
+    opacity: .8;
 }
-.contacts_list{
+.contacts__list{
     border-radius: 10px;
     box-shadow: 0 0 5px 0 rgb(134, 121, 158);
     background:  rgb(231, 226, 240);
-    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin: 10px auto;
+    width: 350px;
 
 }
-#labelling{
-    font-weight: 700;
-}
-.record-form{
-    display: block;
-    padding: 4px 0;
-    text-align: center;
-    opacity: 0.9;
-}
-#delete-btn span{
-    padding-right: 5px;
-}
+.contact_item{
+   margin: 0 20px;
+   line-height: 30px;
+   font-size: 18px;
+   padding-bottom: 10px;
+   border-bottom: 1px solid rgb(134, 121, 158);
+  }
+  .contact_item h3{
+      text-align: left;
+  }
+  .contact_item button{
+    background-color:  rgb(134, 121, 158);
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    width: 70px;
+    height: 30px;
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 600;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  
