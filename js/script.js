@@ -39,7 +39,7 @@ class Contacts {
       
         user.edit({id: maxId});
         this.data.push(user);  
-        localStorage.setItem('user',JSON.stringify(this.data))   
+        localStorage.getItem('user',JSON.stringify(this.data))   
 
        // let localUser = localStorage.getItem('this.data')
         //if (localUser.length == null) this.data=JSON.parse(localUser)
@@ -79,20 +79,25 @@ class ContactsApp extends Contacts {
        
 
         this.init();
+        //this.getData();
 
     }
-    /* getData(){
-        ( async function () {
-                    
-         let getting = await fetch('https://jsonplaceholder.typicode.com/users', {
+    /*
+    getData = function getRequest(url) {
+          let url = 'https://jsonplaceholder.typicode.com/users';           
+         return fetch (url, {
              method: 'GET',
              body: JSON.stringify(user)
-         });
-         if  (!getting.ok) return;
-        });
-        this.add(this.data)
-    }*/
+         }).then (response => {
+             if (response.ok & localStorage.length == null) {
+                 return response.json(user)
+             }
+             this.add(user)
 
+         })
+                 
+    }
+*/
 
 
     init() {
