@@ -39,10 +39,9 @@ class Contacts {
       
         user.edit({id: maxId});
         this.data.push(user);  
-        localStorage.getItem('user',JSON.stringify(this.data))   
+        localStorage.setItem('user',JSON.stringify(this.data))   
 
-       // let localUser = localStorage.getItem('this.data')
-        //if (localUser.length == null) this.data=JSON.parse(localUser)
+      
      
     }
 
@@ -63,7 +62,7 @@ class Contacts {
         this.data = this.data.filter(user => {
             return +user.data.id != +id;
         });
-        localStorage.removeItem('user',JSON.stringify(this.data))    
+        localStorage.setItem('user',JSON.stringify(this.data))    
     }
 
     get() {
@@ -79,26 +78,34 @@ class ContactsApp extends Contacts {
        
 
         this.init();
-        //this.getData();
+        this.getData();
 
     }
-    /*
-    getData = function getRequest(url) {
-          let url = 'https://jsonplaceholder.typicode.com/users';           
-         return fetch (url, {
-             method: 'GET',
-             body: JSON.stringify(user)
-         }).then (response => {
-             if (response.ok & localStorage.length == null) {
-                 return response.json(user)
-             }
-             this.add(user)
+    
+    getData = function getRequest() {
+          let url = 'https://jsonplaceholder.typicode.com/users';    
+          fetch(url)
+          .then((response)=>response.json())       
+          .then((apiData)=>{
+              let arrApiData =[]
+              apiData.forEach((apiItem)=>{
+                  arrApiData.push(new User(
+                      {
+                          id: apiItem.id,
+                          name: apiItem.name,
+                          city: apiItem.address.city,
+                          email:  apiItem.email,
+                          phone:  apiItem.phone
+                      }
+                  ))
+             }) 
+          
+    this.data = [...arrApiData]
+    localStorage.setItem('user',JSON.stringify(this.data)) 
+    this.updateList()
 
-         })
-                 
+        })
     }
-*/
-
 
     init() {
         const contactsApp= document.createElement('div');
@@ -151,7 +158,22 @@ class ContactsApp extends Contacts {
         contactsBtnAdd.addEventListener('click', event =>{
             this.onAdd(event);
         })
+
+        let arrData =JSON.parse(localStorage.getItem('user')) || []
+        if (arrData.length > 0){
+            let newArr = []
+            arrData.forEach((itemData)=>{
+                newArr.push(new User(itemData.data))
+                this.data = [...newArr]
+                this.updateList()
+            })
+        } else{
+            this.getData( )
+            localStorage.setItem('user',JSON.stringify(this.data)) 
+        }
+        
     }
+
 
     updateList() {
         this.contactsList.innerHTML = '';
@@ -197,20 +219,24 @@ class ContactsApp extends Contacts {
 
         if (event.type !='click') return;
 
+        let phoneNo = /\+375\s?\(?[0-9]{2}\)?\s?-?\d{3}\s?-?\d{2}\s?-?\d{2}/,
+        emailNo = /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/;
+
         if (this.contactName.value.length == 0 || 
             this.contactCity.value.length == 0 ||
             this.contactEmail.value.length == 0 ||
-            this.contactPhone.value.length == 0) return;
+            this.contactEmail.value.match(emailNo)||
+            this.contactPhone.value.length == 0||
+            this.contactPhone.value.match(phoneNo)) return;
 
-            let phoneNo = /\+375\s?\(?[0-9]{2}\)?\s?-?\d{3}\s?-?\d{2}\s?-?\d{2}/,
-                emailNo = /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/;
+            
 
 
         const data ={
             name: (this.contactName && this.contactName.value.length > 0) ? this.contactName.value : '',
             city: (this.contactCity && this.contactCity.value.length > 0) ? this.contactCity.value : '',
-            email: (this.contactEmail.value.match(emailNo)) ? this.contactEmail.value : alert ('Введите верно электронную почту'),
-            phone: (this.contactPhone.value.match(phoneNo)) ? this.contactPhone.value : alert ('Введите верно телефон')
+            email: this.contactEmail.value,
+            phone: this.contactPhone.value
                     
           
          };
